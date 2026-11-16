@@ -1,0 +1,576 @@
+/* ============================================================
+   XAUUSD News Impact & Execution Terminal
+   Strict 5-Color Institutional Palette Engine
+   Colors: #070708 | #0B2A1A | #135C3A | #2FA36A | #D8E6DF
+   Zero Red & Zero Yellow - Total Aesthetic Harmony
+   ============================================================ */
+
+:root {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Menlo, monospace;
+
+  /* Strict 5-Color Tokens */
+  --c-obsidian: #070708;
+  --c-pine: #0B2A1A;
+  --c-forest: #135C3A;
+  --c-mint: #2FA36A;
+  --c-sage: #D8E6DF;
+
+  /* Dark Mode Semantic Mapping */
+  --bg-app: #070708;
+  --bg-surface: #0B2A1A;
+  --bg-surface-elevated: #0E3521;
+  --bg-card: rgba(11, 42, 26, 0.85);
+  --bg-card-hover: rgba(19, 92, 58, 0.45);
+  --bg-input: #05140C;
+  --bg-input-focus: #0B2A1A;
+
+  --border-color: #135C3A;
+  --border-light: rgba(47, 163, 106, 0.45);
+  --border-glow: rgba(47, 163, 106, 0.25);
+
+  --text-primary: #D8E6DF;
+  --text-secondary: rgba(216, 230, 223, 0.75);
+  --text-muted: rgba(216, 230, 223, 0.45);
+
+  /* Trade States within Palette (NO RED, NO YELLOW) */
+  --signal-buy: #2FA36A;
+  --signal-buy-bg: rgba(47, 163, 106, 0.20);
+  --signal-buy-border: #2FA36A;
+
+  --signal-sell: #D8E6DF;
+  --signal-sell-bg: #135C3A;
+  --signal-sell-border: #2FA36A;
+
+  --signal-neutral: #D8E6DF;
+  --signal-neutral-bg: rgba(216, 230, 223, 0.12);
+  --signal-neutral-border: rgba(216, 230, 223, 0.35);
+
+  --accent: #2FA36A;
+  --accent-glow: rgba(47, 163, 106, 0.35);
+
+  --shadow-card: 0 10px 30px -4px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(19, 92, 58, 0.45);
+  --shadow-glow: 0 0 20px rgba(47, 163, 106, 0.2);
+  --glass-blur: blur(14px);
+}
+
+/* Light Mode Overrides: "Putih Campur Hijau" (Clean White + Forest Green Institutional Theme) */
+html[data-theme="light"] {
+  /* Strict 5-Color Semantic Inversion */
+  --c-obsidian: #070708;             /* Razor-sharp black text */
+  --c-pine: #EBF4EE;                 /* Soft frosted mint-pine badge background */
+  --c-forest: #135C3A;               /* Jade Forest green */
+  --c-mint: #2FA36A;                 /* Radiant Mint Emerald */
+  --c-sage: #0B2A1A;                 /* Deep Pine text (makes text-sage dark & readable) */
+
+  --bg-app: #F5F9F6;                 /* Pristine white-green canvas background */
+  --bg-surface: #FFFFFF;             /* Pure crisp white surface */
+  --bg-surface-elevated: #EAF4EE;    /* Soft mint-sage elevated surface */
+  --bg-card: #FFFFFF;                /* Crisp white card */
+  --bg-card-hover: #F8FCF9;
+  --bg-input: #FFFFFF;
+  --bg-input-focus: #F0F8F3;
+
+  --border-color: #C2DDD0;           /* Clean refined sage-green border */
+  --border-light: rgba(47, 163, 106, 0.45);
+  --border-glow: rgba(47, 163, 106, 0.15);
+
+  --text-primary: #070708;           /* Deep Obsidian Text - Maximum Contrast */
+  --text-secondary: #0B2A1A;         /* Deep Pine Subheadings */
+  --text-muted: #135C3A;             /* Jade text */
+
+  --signal-buy: #135C3A;
+  --signal-buy-bg: #E3F6EC;
+  --signal-buy-border: #2FA36A;
+
+  --signal-sell: #070708;
+  --signal-sell-bg: #E8F0EC;
+  --signal-sell-border: #135C3A;
+
+  --signal-neutral: #0B2A1A;
+  --signal-neutral-bg: #EAF3EE;
+  --signal-neutral-border: #C2DDD0;
+
+  --accent: #2FA36A;
+  --accent-glow: rgba(47, 163, 106, 0.2);
+
+  --shadow-card: 0 4px 20px -2px rgba(11, 42, 26, 0.06), 0 0 0 1px #C8E0D4;
+  --shadow-glow: 0 0 16px rgba(47, 163, 106, 0.12);
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.2s ease,
+              box-shadow 0.25s ease;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Smooth Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-app);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 9999px;
+  border: 1px solid rgba(47, 163, 106, 0.2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--c-mint);
+}
+
+/* Institutional Terminal Cards */
+.terminal-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.terminal-card:hover {
+  border-color: var(--border-light);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+
+/* Typography & Helper Classes (Zero Red & Yellow) */
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.text-gold, .text-amber {
+  color: var(--accent) !important;
+}
+
+.text-sell, .text-rose {
+  color: var(--signal-sell) !important;
+}
+
+.text-buy, .text-emerald {
+  color: var(--signal-buy) !important;
+}
+
+/* Tactile Interactive Buttons */
+.btn-emerald {
+  background: linear-gradient(135deg, #2FA36A 0%, #135C3A 100%);
+  color: #070708;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 14px var(--accent-glow);
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-emerald:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 20px rgba(47, 163, 106, 0.5);
+  background: linear-gradient(135deg, #38B879 0%, #1A754B 100%);
+}
+
+.btn-emerald:active {
+  transform: translateY(0);
+}
+
+.btn-gold {
+  background: var(--c-pine);
+  color: var(--c-sage);
+  border: 1px solid var(--c-forest);
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.btn-gold:hover {
+  background: var(--c-forest);
+  border-color: var(--c-mint);
+}
+
+/* Signal Badges (NO RED, NO YELLOW) */
+.badge-buy {
+  background: var(--signal-buy-bg);
+  color: var(--signal-buy);
+  border: 1px solid var(--signal-buy-border);
+  box-shadow: 0 0 12px rgba(47, 163, 106, 0.25);
+}
+
+.badge-sell {
+  background: var(--signal-sell-bg);
+  color: var(--signal-sell);
+  border: 1px solid var(--signal-sell-border);
+  box-shadow: 0 0 12px rgba(19, 92, 58, 0.35);
+}
+
+.badge-neutral {
+  background: var(--signal-neutral-bg);
+  color: var(--signal-neutral);
+  border: 1px solid var(--signal-neutral-border);
+}
+
+.badge-gold {
+  background: rgba(47, 163, 106, 0.15);
+  color: var(--c-mint);
+  border: 1px solid var(--c-forest);
+}
+
+.badge-emerald {
+  background: var(--signal-buy-bg);
+  color: var(--c-mint);
+  border: 1px solid var(--c-mint);
+}
+
+/* High Volatility Alert Banner (Strictly Emerald / Pine / Sage) */
+@keyframes emeraldPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(47, 163, 106, 0.6);
+    border-color: rgba(47, 163, 106, 1);
+  }
+  70% {
+    box-shadow: 0 0 0 14px rgba(47, 163, 106, 0);
+    border-color: rgba(47, 163, 106, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(47, 163, 106, 0);
+    border-color: rgba(47, 163, 106, 1);
+  }
+}
+
+.danger-zone-alert {
+  animation: emeraldPulse 1.6s infinite ease-in-out;
+  background: linear-gradient(90deg, rgba(19, 92, 58, 0.6) 0%, rgba(11, 42, 26, 0.85) 50%, rgba(19, 92, 58, 0.6) 100%);
+  border: 1.5px solid var(--c-mint);
+  color: var(--c-sage);
+}
+
+@keyframes liveDotGlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.85); }
+}
+
+.live-dot {
+  animation: liveDotGlow 1.8s infinite ease-in-out;
+}
+
+/* Tactile Input Fields */
+.terminal-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.terminal-input:hover {
+  border-color: var(--border-light);
+  background: var(--bg-input-focus);
+}
+
+.terminal-input:focus {
+  border-color: var(--c-mint);
+  background: var(--bg-input-focus);
+  box-shadow: 0 0 0 3px rgba(47, 163, 106, 0.25);
+}
+
+/* Micro-Step Controls for Inputs */
+.stepper-btn {
+  background: var(--c-pine);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.stepper-btn:hover {
+  background: var(--c-mint);
+  color: var(--c-obsidian);
+  border-color: var(--c-mint);
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(47, 163, 106, 0.4);
+}
+
+.stepper-btn:active {
+  transform: scale(0.95);
+}
+
+/* Tab Switcher Buttons */
+.tab-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 9px 16px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: rgba(47, 163, 106, 0.12);
+  border-color: rgba(47, 163, 106, 0.25);
+}
+
+.tab-btn.active {
+  color: #D8E6DF;
+  background: linear-gradient(135deg, rgba(47, 163, 106, 0.45) 0%, rgba(19, 92, 58, 0.7) 100%);
+  border: 1px solid var(--c-mint);
+  box-shadow: 0 4px 12px rgba(47, 163, 106, 0.3);
+}
+
+html[data-theme="light"] .tab-btn.active {
+  color: #070708;
+  background: #C6DDD2;
+  border: 1px solid #135C3A;
+  font-weight: 700;
+}
+
+/* Preset Chips */
+.preset-chip {
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.preset-chip:hover {
+  border-color: var(--c-mint);
+  color: var(--text-primary);
+  background: rgba(47, 163, 106, 0.15);
+  box-shadow: 0 0 10px rgba(47, 163, 106, 0.25);
+  transform: translateY(-1px);
+}
+
+.preset-chip:active {
+  transform: translateY(0);
+}
+
+/* Macro Regime Badges (Strict 5 Colors) */
+.regime-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Pillar Progress Bars */
+.pillar-bar-container {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--border-color);
+}
+
+.pillar-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* Chat bubble styles */
+.chat-msg-user {
+  background: linear-gradient(135deg, rgba(47, 163, 106, 0.25) 0%, rgba(19, 92, 58, 0.35) 100%);
+  border: 1px solid rgba(47, 163, 106, 0.4);
+  color: var(--text-primary);
+  border-radius: 14px 14px 2px 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.chat-msg-ai {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 14px 14px 14px 2px;
+}
+
+.chat-system-note {
+  padding: 4px 12px;
+  margin: 4px 0;
+  font-size: 11px;
+  text-align: center;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  background: var(--c-pine);
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  align-self: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Simulator Input Row Styles */
+.sim-input-row {
+  border-radius: 12px;
+  padding: 14px;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
+}
+
+.sim-input-row.is-main {
+  border: 1.5px solid var(--c-mint);
+  background: rgba(47, 163, 106, 0.12);
+}
+
+/* Light Mode Specific Component Refinements (Putih Campur Hijau) */
+html[data-theme="light"] .terminal-card {
+  background: #FFFFFF;
+  border: 1px solid #C2DDD0;
+  box-shadow: 0 4px 18px rgba(11, 42, 26, 0.05);
+}
+
+html[data-theme="light"] .terminal-card:hover {
+  border-color: #2FA36A;
+  box-shadow: 0 6px 24px rgba(47, 163, 106, 0.12);
+}
+
+html[data-theme="light"] .terminal-input {
+  background: #FFFFFF !important;
+  color: #070708 !important;
+  border: 1.5px solid #C2DDD0;
+}
+
+html[data-theme="light"] .terminal-input:focus {
+  border-color: #2FA36A;
+  background: #FFFFFF !important;
+  box-shadow: 0 0 0 3px rgba(47, 163, 106, 0.18);
+}
+
+html[data-theme="light"] .stepper-btn {
+  background: #EAF4EE;
+  border: 1px solid #C2DDD0;
+  color: #0B2A1A;
+}
+
+html[data-theme="light"] .stepper-btn:hover {
+  background: #2FA36A;
+  color: #FFFFFF;
+  border-color: #2FA36A;
+}
+
+html[data-theme="light"] .tab-btn {
+  color: #0B2A1A;
+}
+
+html[data-theme="light"] .tab-btn:hover {
+  color: #070708;
+  background: #EAF4EE;
+}
+
+html[data-theme="light"] .tab-btn.active {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #2FA36A 0%, #135C3A 100%);
+  border: 1px solid #135C3A;
+  box-shadow: 0 4px 12px rgba(47, 163, 106, 0.25);
+}
+
+html[data-theme="light"] .ai-quick-prompt {
+  background: #FFFFFF;
+  border: 1px solid #C2DDD0;
+  color: #0B2A1A;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+html[data-theme="light"] .ai-quick-prompt:hover {
+  background: #EAF4EE;
+  border-color: #2FA36A;
+  color: #135C3A;
+}
+
+html[data-theme="light"] .chat-msg-user {
+  background: #EAF4EE;
+  border: 1px solid #2FA36A;
+  color: #070708;
+  box-shadow: 0 2px 8px rgba(19, 92, 58, 0.08);
+}
+
+html[data-theme="light"] .chat-msg-ai {
+  background: #FFFFFF;
+  border: 1px solid #C2DDD0;
+  color: #070708;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+html[data-theme="light"] .chat-system-note {
+  background: #EAF4EE;
+  border: 1px solid #C2DDD0;
+  color: #0B2A1A;
+}
+
+html[data-theme="light"] .danger-zone-alert {
+  background: #EAF5EF;
+  border: 1.5px solid #2FA36A;
+  color: #0B2A1A;
+}
+
+html[data-theme="light"] .regime-badge {
+  background: #EAF4EE;
+  border: 1px solid #C2DDD0;
+  color: #0B2A1A;
+}
+
+html[data-theme="light"] .sim-input-row {
+  background: #F9FCFA;
+  border: 1px solid #C2DDD0;
+}
+
+html[data-theme="light"] .sim-input-row.is-main {
+  background: #EAF6F0;
+  border: 1.5px solid #2FA36A;
+}

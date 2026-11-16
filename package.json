@@ -1,0 +1,22 @@
+{
+  "name": "xauusd-news-impact-terminal",
+  "version": "1.0.0",
+  "description": "XAUUSD News Impact & Execution Terminal for PPI, CPI, and NFP analysis",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "xauusd",
+    "gold",
+    "forex",
+    "cpi",
+    "nfp",
+    "ppi",
+    "trading",
+    "terminal"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}

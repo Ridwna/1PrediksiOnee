@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XAUUSD News Impact & Execution Terminal</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: ['class', '[data-theme="dark"]'],
+      theme: {
+        extend: {
+          colors: {
+            obsidian: 'var(--c-obsidian)',
+            pine: 'var(--c-pine)',
+            forest: 'var(--c-forest)',
+            mint: 'var(--c-mint)',
+            sage: 'var(--c-sage)'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[var(--bg-app)] text-[var(--text-primary)] antialiased min-h-screen flex flex-col font-sans transition-colors duration-300">
+
+  <!-- ========================================================
+       TOP TICKER BAR (INSTITUTIONAL MARKET OVERVIEW)
+       ======================================================== -->
+  <div class="border-b border-[var(--border-color)] bg-[var(--bg-surface)] py-1.5 px-4 text-xs font-mono">
+    <div class="max-w-7xl mx-auto flex items-center justify-between overflow-x-auto gap-6 whitespace-nowrap">
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-mint live-dot"></span>
+          <span class="font-bold text-mint">XAUUSD:</span>
+          <span class="text-sage font-semibold">$2,684.50</span>
+          <span class="text-mint text-[11px] font-bold">+0.48%</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-sage/70 font-bold">DXY:</span>
+          <span class="text-sage">104.25</span>
+          <span class="text-sage/80 text-[11px]">-0.18%</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-sage/70 font-bold">US10Y:</span>
+          <span class="text-sage">4.38%</span>
+          <span class="text-sage/80 text-[11px]">-1.2 bps</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-sage/70 font-bold">FED RATE:</span>
+          <span class="text-sage">4.50% - 4.75%</span>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-3 text-sage/70 text-[11px]">
+        <span class="hidden md:inline">🏛️ Federal Reserve Policy Monitor</span>
+        <button id="soundToggleBtn" class="px-2 py-0.5 rounded border border-forest text-mint bg-pine hover:bg-forest/40 transition cursor-pointer font-bold">
+          🔊 Audio ON
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       HEADER & LIVE MARKET CLOCK (WIB UTC+7) & DST
+       ======================================================== -->
+  <header class="border-b border-[var(--border-color)] bg-[var(--bg-card)] backdrop-blur-md sticky top-0 z-40 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Logo & Branding -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#135C3A] to-[#2FA36A] flex items-center justify-center font-bold text-obsidian text-xl shadow-lg border border-mint/40">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg md:text-xl font-bold tracking-tight text-[var(--text-primary)]">
+              XAUUSD <span class="text-mint">News Impact</span> & Execution
+            </h1>
+            <span class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-pine text-mint border border-forest">
+              TERMINAL PRO
+            </span>
+          </div>
+          <p class="text-xs text-[var(--text-secondary)]">Institutional Macro Economic Release Analysis & Correlation Engine</p>
+        </div>
+      </div>
+
+      <!-- Real-Time WIB Clock & DST Badge -->
+      <div class="flex items-center gap-4 flex-wrap">
+        
+        <div class="bg-[var(--bg-input)] border border-[var(--border-color)] rounded-lg px-3 py-1.5 flex items-center gap-3">
+          <div class="text-right">
+            <div id="liveClockWIB" class="text-base font-mono font-bold text-mint tracking-wider">
+              --:--:-- WIB
+            </div>
+            <div id="liveDateWIB" class="text-[11px] text-[var(--text-secondary)] font-mono">
+              Memuat Waktu...
+            </div>
+          </div>
+          <div class="h-8 w-px bg-[var(--border-color)]"></div>
+          <div class="flex flex-col items-start gap-0.5">
+            <span id="dstBadge" class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-pine text-sage border border-forest">
+              Menghitung DST...
+            </span>
+            <span id="releaseScheduleInfo" class="text-[10px] text-sage/70 font-mono">
+              Jadwal Rilis: --:-- WIB
+            </span>
+          </div>
+        </div>
+
+        <!-- Release Countdown -->
+        <div class="hidden lg:flex flex-col items-end bg-[var(--bg-input)] border border-[var(--border-color)] rounded-lg px-3 py-1.5">
+          <span class="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider font-semibold">Hitung Mundur Rilis</span>
+          <div id="newsCountdown" class="text-sm font-mono font-bold text-sage">
+            T-00h 00m 00s
+          </div>
+        </div>
+
+        <!-- Theme Toggle & Test Alert -->
+        <div class="flex items-center gap-2">
+          <button id="testAlertBtn" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-forest text-sage bg-pine hover:border-mint transition cursor-pointer">
+            Simulasi Uji Alert
+          </button>
+          
+          <button id="themeToggleBtn" title="Ganti Mode Gelap / Terang" class="w-9 h-9 rounded-lg border border-[var(--border-color)] bg-[var(--bg-input)] hover:border-mint transition flex items-center justify-center cursor-pointer">
+            <span id="themeToggleIcon" class="text-base">☀️</span>
+          </button>
+
+          <!-- Mobile AI Button Trigger -->
+          <button id="toggleCopilotMobileBtn" class="lg:hidden px-3 py-1.5 rounded-lg btn-emerald text-xs font-bold flex items-center gap-1.5">
+            <span>🤖</span> Copilot
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ========================================================
+       HIGH VOLATILITY / WIDE SPREAD ZONE BANNER (0 - 5 MENIT)
+       ======================================================== -->
+  <div id="volatilityAlertBanner" class="hidden danger-zone-alert text-sage py-3 px-4 shadow-xl z-30 transition-all">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl text-mint animate-bounce">⚡</span>
+        <div>
+          <span class="font-bold text-sage tracking-wide uppercase text-sm block">
+            HIGH VOLATILITY & WIDE SPREAD ZONE AKTIF (Menit 0 - 5 Post Release)
+          </span>
+          <span class="text-xs text-sage/80">
+            Protokol Manajemen Risiko: Dilarang eksekusi Market Order instan! Spread XAUUSD melebar drastis & rawan slippage ekstrim.
+          </span>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="px-2.5 py-1 rounded bg-pine border border-forest text-xs font-mono font-bold text-mint">
+          SPREAD EXPANSION BUFFER
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       MAIN APPLICATION LAYOUT (MULTI-COLUMN TERMINAL)
+       ======================================================== -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT & CENTER COLUMN (SIMULATOR, GAUGES, CHEAT SHEET) -->
+    <div class="lg:col-span-8 flex flex-col gap-6">
+
+      <!-- ====================================================
+           CORE FEATURE: INTERACTIVE NEWS SIMULATOR
+           ==================================================== -->
+      <section class="terminal-card p-5 relative overflow-hidden">
+        
+        <!-- Header & News Selector Tabs -->
+        <div class="flex flex-wrap items-center justify-between border-b border-[var(--border-color)] pb-3 gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-mint text-base">📊</span>
+            <h2 class="font-bold text-base text-[var(--text-primary)]">Interactive News Release Simulator</h2>
+          </div>
+
+          <!-- Tabs: CPI, NFP, PPI, Gabungan -->
+          <div class="flex rounded-lg bg-[var(--bg-input)] p-1 border border-[var(--border-color)] flex-wrap gap-1">
+            <button class="tab-btn active rounded-md" data-tab="cpi">
+              <span>🔥</span> CPI (Konsumen)
+            </button>
+            <button class="tab-btn rounded-md" data-tab="nfp">
+              <span>💼</span> NFP (Tenaga Kerja)
+            </button>
+            <button class="tab-btn rounded-md" data-tab="ppi">
+              <span>🏭</span> PPI (Produsen)
+            </button>
+            <button class="tab-btn rounded-md" data-tab="composite">
+              <span>🌐</span> Gabungan (All: CPI+NFP+PPI)
+            </button>
+          </div>
+        </div>
+
+        <!-- Presets Row -->
+        <div id="presetButtonsContainer" class="flex flex-wrap items-center gap-2 mt-4 pt-1">
+          <!-- Dynamically populated via app.js -->
+        </div>
+
+        <!-- Input Fields Grid -->
+        <div class="mt-4">
+          <div class="text-xs text-[var(--text-secondary)] mb-2 font-medium">
+            Masukkan parameter rilis data di bawah ini (perhitungan deviasi otomatis berjalan real-time):
+          </div>
+          <div id="simulatorInputFields" class="grid grid-cols-1 gap-3">
+            <!-- Dynamically populated via renderInputs() in app.js -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ====================================================
+           MASTER COMPOSITE MACRO INDICATOR (NFP + CPI + PPI)
+           ==================================================== -->
+      <section id="compositeMacroCard" class="terminal-card p-5 border-t-2 border-t-[#2FA36A] shadow-lg relative overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4 border-b border-[var(--border-color)] pb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#135C3A] to-[#2FA36A] flex items-center justify-center text-white font-bold text-sm shadow border border-[#2FA36A]/30">
+              🌐
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-bold text-base text-[var(--text-primary)]">Indikator Komposit Makro AS Gabungan</h3>
+                <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-pine text-mint border border-forest">ALL-IN-ONE</span>
+              </div>
+              <p class="text-xs text-[var(--text-secondary)]">Kompilasi Agregat 3 Rilis Utama: CPI (40%) + NFP (35%) + PPI (25%)</p>
+            </div>
+          </div>
+          <div id="compositeRegimeBadge" class="regime-badge bg-pine text-mint border border-forest">
+            MEMUAT REGIME MAKRO...
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+          <!-- Composite Speedometer / Gauge -->
+          <div class="md:col-span-5 flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-color)]">
+            <div class="text-[11px] text-[var(--text-muted)] uppercase tracking-wider font-semibold mb-1">
+              Macro Composite Confluence Meter
+            </div>
+            <canvas id="compositeGaugeCanvas" width="260" height="150" class="max-w-full"></canvas>
+            <div class="flex flex-col items-center gap-0.5 mt-1">
+              <span id="compositeMeterVal" class="text-xl font-mono font-bold text-mint">SELL (BEARISH)</span>
+              <span id="compositeMeterSub" class="text-[11px] text-[var(--text-secondary)] font-mono">Keyakinan Sinyal: 70%</span>
+            </div>
+            <div id="compositeSignalBadge" class="mt-2 font-mono text-xs px-3 py-1 rounded-md font-bold badge-sell">
+              SELL XAUUSD (BEARISH)
+            </div>
+          </div>
+
+          <!-- 3 Pillars Breakdown (CPI 40%, NFP 35%, PPI 25%) -->
+          <div class="md:col-span-7 flex flex-col gap-3">
+            <div class="p-3.5 rounded-xl bg-[var(--bg-input)]/70 border border-[var(--border-color)] flex flex-col gap-2.5">
+              <span class="text-xs font-bold text-mint uppercase tracking-wider block">
+                Kontribusi 3 Pilar Makroekonomi AS:
+              </span>
+              
+              <!-- CPI Pillar -->
+              <div>
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span class="font-medium text-sage flex items-center gap-1.5">
+                    <span>🔥</span> CPI Konsumen (Bobot 40%)
+                  </span>
+                  <span id="cpiPillarVal" class="font-mono text-xs font-bold text-sage">0.0 pts</span>
+                </div>
+                <div class="pillar-bar-container">
+                  <div id="cpiPillarBar" class="pillar-bar-fill bg-mint" style="width: 50%;"></div>
+                </div>
+              </div>
+
+              <!-- NFP Pillar -->
+              <div>
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span class="font-medium text-sage flex items-center gap-1.5">
+                    <span>💼</span> NFP & Upah (Bobot 35%)
+                  </span>
+                  <span id="nfpPillarVal" class="font-mono text-xs font-bold text-sage">0.0 pts</span>
+                </div>
+                <div class="pillar-bar-container">
+                  <div id="nfpPillarBar" class="pillar-bar-fill bg-forest" style="width: 50%;"></div>
+                </div>
+              </div>
+
+              <!-- PPI Pillar -->
+              <div>
+                <div class="flex items-center justify-between text-xs mb-1">
+                  <span class="font-medium text-sage flex items-center gap-1.5">
+                    <span>🏭</span> PPI Produsen (Bobot 25%)
+                  </span>
+                  <span id="ppiPillarVal" class="font-mono text-xs font-bold text-sage">0.0 pts</span>
+                </div>
+                <div class="pillar-bar-container">
+                  <div id="ppiPillarBar" class="pillar-bar-fill bg-mint" style="width: 50%;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Intermarket Macro Synthesis -->
+            <div class="p-3 rounded-xl bg-[var(--bg-input)]/70 border border-[var(--border-color)] text-xs text-sage">
+              <div class="text-[11px] font-bold text-mint uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <span>🧠</span> Sintesis Dampak Komposit terhadap XAUUSD:
+              </div>
+              <div id="compositeSynthesisText" class="leading-relaxed text-sage/90">
+                Menghitung kombinasi data inflasi konsumen, inflasi produsen, dan pasar tenaga kerja...
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================
+           SIGNAL CARD & GAUGE METER (CORE OUTPUT)
+           ==================================================== -->
+      <section class="terminal-card p-5 border-t-2 border-t-forest">
+        
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-mint text-base">🎯</span>
+            <h3 class="font-bold text-base text-[var(--text-primary)]">Output Sinyal Otomatis & Gauge Meter</h3>
+          </div>
+          <div id="signalBadge" class="badge-sell font-mono text-sm px-3.5 py-1.5 rounded-lg font-bold">
+            SELL XAUUSD (BEARISH)
+          </div>
+        </div>
+
+        <!-- Gauge & Metric Visual Row -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+          
+          <!-- Gauge Canvas -->
+          <div class="md:col-span-5 flex flex-col items-center justify-center p-3 rounded-xl bg-[var(--bg-input)]/50 border border-[var(--border-color)]">
+            <div class="text-[11px] text-[var(--text-muted)] uppercase tracking-wider font-semibold mb-1">
+              Signal Strength Meter
+            </div>
+            <canvas id="signalGaugeCanvas" width="260" height="150" class="max-w-full"></canvas>
+            <div class="flex flex-col items-center gap-0.5 mt-1">
+              <span id="signalMeterVal" class="text-xl font-mono font-bold text-mint">SELL (BEARISH)</span>
+              <span id="signalMeterSub" class="text-[11px] text-[var(--text-secondary)] font-mono">Confidence Score: 50%</span>
+            </div>
+            <div id="signalMeterDesc" class="text-xs text-[var(--text-secondary)] mt-1 font-medium text-center">
+              Menghitung deviasi fundamental...
+            </div>
+          </div>
+
+          <!-- Component Breakdown & Impact Summary -->
+          <div class="md:col-span-7 flex flex-col gap-3">
+            
+            <div class="p-3.5 rounded-xl bg-[var(--bg-input)]/70 border border-[var(--border-color)]">
+              <span class="text-xs font-bold text-mint uppercase tracking-wider block mb-2">
+                Rincian Deviasi & Komponen Rilis:
+              </span>
+              <div id="componentChecklist" class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+                <!-- Dynamically populated via renderSimulatorOutput() -->
+              </div>
+            </div>
+
+            <!-- Dynamic Macro Rationale -->
+            <div class="p-3.5 rounded-xl bg-[var(--bg-input)]/70 border border-[var(--border-color)] text-xs text-sage">
+              <div class="text-[11px] font-bold text-mint uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                <span>💡</span> Ringkasan Logika Fundamental:
+              </div>
+              <div id="rationaleText" class="leading-relaxed">
+                Memproses angka input untuk menghasilkan kalkulasi makro...
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Anomaly Conflict Warning (if exists) -->
+        <div id="anomalyWarning" class="hidden mt-4 p-3 rounded-lg bg-pine border border-forest text-xs text-sage font-mono">
+          <!-- Populated if conflict exists -->
+        </div>
+
+        <!-- Tactical Execution Protocol Recommendation -->
+        <div class="mt-4 p-3.5 rounded-xl bg-pine border border-forest flex items-start gap-3">
+          <span class="text-xl">🛡️</span>
+          <div class="text-xs">
+            <span class="font-bold text-mint uppercase tracking-wider block mb-0.5">
+              Panduan Eksekusi Institusional:
+            </span>
+            <div id="executionAdviceText" class="text-sage leading-relaxed">
+              Tunggu konfirmasi candle 5 menit pasca rilis berita.
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ====================================================
+           CHEAT SHEET MATRIX & EXECUTION PROTOCOLS
+           ==================================================== -->
+      <section class="terminal-card p-5">
+        
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-mint text-base">📋</span>
+            <h3 class="font-bold text-base text-[var(--text-primary)]">Matriks Rangkuman Cepat (Cheat Sheet Interaktif)</h3>
+          </div>
+
+          <!-- Category Filters -->
+          <div class="flex items-center gap-1.5 text-xs">
+            <button class="cheat-cat-btn px-2.5 py-1 rounded border border-forest bg-forest/40 text-sage font-semibold transition" data-category="all">
+              Semua
+            </button>
+            <button class="cheat-cat-btn px-2.5 py-1 rounded border border-[var(--border-color)] text-sage/70 hover:text-sage transition font-medium" data-category="inflation">
+              Inflasi (CPI / PPI)
+            </button>
+            <button class="cheat-cat-btn px-2.5 py-1 rounded border border-[var(--border-color)] text-sage/70 hover:text-sage transition font-medium" data-category="labor">
+              Ketenagakerjaan (NFP)
+            </button>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-3">
+          <input id="cheatSheetSearch" type="text" placeholder="🔍 Cari nama berita, fokus data, atau dampak XAUUSD..." class="terminal-input py-2 px-3 text-xs" />
+        </div>
+
+        <!-- Matrix Table -->
+        <div class="overflow-x-auto rounded-lg border border-[var(--border-color)]">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="bg-[var(--bg-input)] text-sage/70 uppercase font-mono text-[10px] border-b border-[var(--border-color)]">
+              <tr>
+                <th class="py-2.5 px-4">Nama Berita & Jadwal</th>
+                <th class="py-2.5 px-4">Fokus Data Utama</th>
+                <th class="py-2.5 px-4 text-sage">Jika Aktual > Forecast</th>
+                <th class="py-2.5 px-4 text-mint">Jika Aktual < Forecast</th>
+                <th class="py-2.5 px-4 text-sage">Aturan Khusus / Trap</th>
+              </tr>
+            </thead>
+            <tbody id="cheatSheetTableBody" class="divide-y divide-[var(--border-color)]">
+              <!-- Dynamically populated via renderCheatSheet() -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 3 Poin Kunci Eksekusi Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 mt-5">
+          
+          <!-- Card 1: Alur Logika Dasar -->
+          <div class="p-3.5 rounded-xl bg-[var(--bg-input)]/60 border border-[var(--border-color)] hover:border-mint/50 transition">
+            <div class="flex items-center gap-2 mb-2 text-mint font-bold text-xs uppercase tracking-wide">
+              <span>1️⃣</span> Alur Logika Transmisi
+            </div>
+            <p class="text-xs text-sage leading-relaxed">
+              <strong class="text-sage font-bold">Data AS Panas</strong> &rarr; The Fed mempertahankan suku bunga tinggi &rarr; Imbal hasil US10Y & DXY menguat &rarr; <strong class="text-sage underline">XAUUSD Mengalami Penjualan</strong>. Emas adalah instrumen non-yielding; kenaikan suku bunga riil membuatnya kurang menarik.
+            </p>
+          </div>
+
+          <!-- Card 2: Panduan Jam Rilis WIB -->
+          <div class="p-3.5 rounded-xl bg-[var(--bg-input)]/60 border border-[var(--border-color)] hover:border-mint/50 transition">
+            <div class="flex items-center gap-2 mb-2 text-mint font-bold text-xs uppercase tracking-wide">
+              <span>2️⃣</span> Jam Rilis WIB & DST
+            </div>
+            <p class="text-xs text-sage leading-relaxed">
+              &bull; <strong class="text-sage font-bold">19:30 WIB:</strong> Periode Daylight Saving Time (DST: Maret s.d. November).<br/>
+              &bull; <strong class="text-sage font-bold">20:30 WIB:</strong> Periode Standard Time (November s.d. Maret).<br/>
+              Pastikan jam terminal trading Anda disinkronkan dengan rilis kalender ekonomi resmi.
+            </p>
+          </div>
+
+          <!-- Card 3: Protokol Risiko & Buffer 5 Menit -->
+          <div class="p-3.5 rounded-xl bg-[var(--bg-input)]/60 border border-[var(--border-color)] hover:border-mint/50 transition">
+            <div class="flex items-center gap-2 mb-2 text-mint font-bold text-xs uppercase tracking-wide">
+              <span>3️⃣</span> Golden Rule: Buffer 5 Menit
+            </div>
+            <p class="text-xs text-sage leading-relaxed">
+              <strong class="text-mint font-bold">Dilarang Open Posisi</strong> pada menit ke 0 s.d. 5 setelah detik berita rilis. Tunggu likuiditas normal, spread mengecil, dan struktur candle M5 pertama selesai terbentuk untuk menghindari fakeout stop hunt.
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- RIGHT COLUMN: AI TRADING ASSISTANT (COPILOT DOCKED / SPLIT PANEL) -->
+    <aside id="aiCopilotSidebar" class="lg:col-span-4 flex flex-col gap-4">
+      
+      <div class="terminal-card p-4 flex flex-col h-full min-h-[640px] sticky top-20">
+        
+        <!-- Copilot Header -->
+        <div class="flex items-center justify-between border-b border-[var(--border-color)] pb-3 mb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#135C3A] to-[#2FA36A] flex items-center justify-center text-white font-bold text-sm shadow border border-[#2FA36A]/30">
+              🤖
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-[var(--text-primary)] flex items-center gap-1.5">
+                AI Trading Copilot
+                <span class="w-2 h-2 rounded-full bg-mint live-dot"></span>
+              </h3>
+              <p class="text-[10px] text-sage/70 font-mono">Live Macroeconomic Assistant</p>
+            </div>
+          </div>
+
+          <button id="closeCopilotMobileBtn" class="lg:hidden text-sage hover:text-white text-lg">
+            ✕
+          </button>
+        </div>
+
+        <!-- Quick Prompts Row -->
+        <div class="mb-3">
+          <span class="text-[10px] uppercase font-bold text-sage/70 tracking-wider block mb-1.5">
+            Quick Analysis Prompts:
+          </span>
+          <div class="flex flex-wrap gap-1.5">
+            <button class="ai-quick-prompt px-2 py-1 rounded bg-[var(--bg-input)] hover:border-mint border border-[var(--border-color)] text-[11px] text-sage font-medium transition cursor-pointer text-left" data-prompt="Analisis komposit gabungan NFP CPI PPI">
+              🌐 Analisis Gabungan NFP+CPI+PPI
+            </button>
+            <button class="ai-quick-prompt px-2 py-1 rounded bg-[var(--bg-input)] hover:border-mint border border-[var(--border-color)] text-[11px] text-sage font-medium transition cursor-pointer text-left" data-prompt="Analisis data input saat ini">
+              📊 Analisis Input Saat Ini
+            </button>
+            <button class="ai-quick-prompt px-2 py-1 rounded bg-[var(--bg-input)] hover:border-mint border border-[var(--border-color)] text-[11px] text-sage font-medium transition cursor-pointer text-left" data-prompt="Analisis skenario NFP mixed data">
+              ⚡ Skenario NFP Mixed Data
+            </button>
+            <button class="ai-quick-prompt px-2 py-1 rounded bg-[var(--bg-input)] hover:border-mint border border-[var(--border-color)] text-[11px] text-sage font-medium transition cursor-pointer text-left" data-prompt="Kenapa spread melebar saat rilis CPI?">
+              ⚠️ Kenapa Spread Melebar?
+            </button>
+            <button class="ai-quick-prompt px-2 py-1 rounded bg-[var(--bg-input)] hover:border-mint border border-[var(--border-color)] text-[11px] text-sage font-medium transition cursor-pointer text-left" data-prompt="Cara konfirmasi arah DXY dan US10Y">
+              🎯 Konfirmasi DXY & US10Y
+            </button>
+            <button class="ai-quick-prompt px-2 py-1 rounded bg-[var(--bg-input)] hover:border-mint border border-[var(--border-color)] text-[11px] text-sage font-medium transition cursor-pointer text-left" data-prompt="Strategi entry pasca 5 menit">
+              🛡️ Strategi Entry Pasca 5 Menit
+            </button>
+          </div>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div id="aiChatMessages" class="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 max-h-[460px] border border-[var(--border-color)] rounded-xl p-3 bg-[var(--bg-input)]/40">
+          <!-- Initial AI greeting loaded via app.js -->
+        </div>
+
+        <!-- Chat Input Bar -->
+        <div class="mt-3 pt-2 border-t border-[var(--border-color)]">
+          <div class="flex items-center gap-2">
+            <input id="aiChatInput" type="text" placeholder="Ketik pertanyaan trading atau makro..." class="terminal-input py-2 px-3 text-xs flex-1" />
+            <button id="aiChatSend" class="btn-emerald px-4 py-2 rounded-lg text-xs font-bold flex items-center justify-center">
+              Kirim
+            </button>
+          </div>
+          <span class="block text-[10px] text-sage/60 mt-1 font-mono text-center">
+            Copilot membaca parameter simulator secara instan saat merespons.
+          </span>
+        </div>
+
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- ========================================================
+       FOOTER
+       ======================================================== -->
+  <footer class="border-t border-[var(--border-color)] bg-[var(--bg-surface)] py-4 px-4 text-xs text-sage/70 transition-colors">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <span class="font-bold text-sage">XAUUSD News Impact & Execution Terminal</span> &bull; Institutional Trader Edition
+      </div>
+      <div class="flex items-center gap-4 text-[11px]">
+        <span>Jadwal AS: 19:30 WIB (DST) / 20:30 WIB (EST)</span>
+        <span>&bull;</span>
+        <span class="text-mint font-semibold">Risk Warning: Trading Gold involves high capital risk.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main Application Logic Script -->
+  <script src="app.js"></script>
+</body>
+</html>
