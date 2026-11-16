@@ -2,8 +2,6 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
-
 const MIME_TYPES = {
   '.html': 'text/html; charset=UTF-8',
   '.css': 'text/css; charset=UTF-8',
@@ -15,9 +13,9 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon'
 };
 
-const server = http.createServer((req, res) => {
-  let reqUrl = req.url.split('?')[0];
-  if (reqUrl === '/') {
+function handler(req, res) {
+  let reqUrl = req.url ? req.url.split('?')[0] : '/';
+  if (reqUrl === '/' || reqUrl === '') {
     reqUrl = '/index.html';
   }
 
@@ -42,14 +40,22 @@ const server = http.createServer((req, res) => {
 
     res.writeHead(200, {
       'Content-Type': contentType,
-      'Cache-Control': 'no-cache, no-store, must-revalidate'
+      'Cache-Control': 'public, max-age=3600'
     });
 
     const stream = fs.createReadStream(filePath);
     stream.pipe(res);
   });
-});
+}
 
-server.listen(PORT, () => {
-  console.log(`XAUUSD News Impact Terminal running at http://localhost:${PORT}`);
-});
+// Export handler for Vercel Serverless Function compatibility
+module.exports = handler;
+
+// Run standalone server if executed directly
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  const server = http.createServer(handler);
+  server.listen(PORT, () => {
+    console.log(`XAUUSD News Impact Terminal running at http://localhost:${PORT}`);
+  });
+}
